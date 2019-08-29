@@ -201,9 +201,7 @@ class Movie:
         self.mov_id = mov_id
 
     def find_film(mov_id):
-
         movie = matcher.match("Movie", movieID=mov_id).first()
-
         return movie
 
     def get_film_data(mov_id):
@@ -267,6 +265,7 @@ class Movie:
             return graph.run(query, today=today)
 
     def recommend_films(user_id):
+
             return ''
 
     def get_similar_films(mov_id):
