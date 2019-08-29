@@ -1,0 +1,19 @@
+<!--#TODO: comment -->
+{% extends "layout.html" %}
+{% block body %}
+
+<h2>Home</h2>
+<!--#TODO: add top rated films -->
+<!--#TODO: add trending films -->
+<!--#TODO: if logged in, personal recommended films  -->
+<br>
+
+<h4>Top Rated Films</h4>
+{% include "display_top.html" %}
+
+<br/><h4>Trending Films</h4>
+{% include "display_trending.html" %}
+
+<br/><h4>Today's Recent Posts</h4>
+{% include "display_posts.html" %}
+{% endblock %}

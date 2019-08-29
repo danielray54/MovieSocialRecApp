@@ -1,0 +1,114 @@
+<!--#TODO: Comment -->
+{% extends "layout.html" %}
+{% block body %}
+
+<h2>{{ title }}<small>({{year}})</small></h2>
+<table>
+    <tr>
+        <td>
+            <img src={{poster}} alt={{title}} width="200px" >
+            <br/>
+            <div style="text-align: center;">
+            <button id="myBtn">Trailer</button>
+            </div>
+            {% if featcrew|length%}
+            <p style="line-height: 200%">
+                <strong>Featured Crew: </strong><br/>
+                {% for k, v in featcrew.items() %}
+                <strong>{{v}}</strong> - {{k}}<br/>
+                {% endfor %}
+            </p>
+            {% else %}
+
+            {% endif %}
+        </td>
+        <td>
+            <h4 style="text-align: center;">Overview</h4>
+            <p style="text-align: justify;">{{overview}}</p>
+            <p>
+                <strong>Language: </strong> {{lang}} <br/><br/>
+                <strong>Genres: </strong>{{genres}}<br/><br/>
+                <strong>Runtime: </strong>{{runtime}}<br/><br/>
+                <strong>Budget: </strong>{{budget}} <br/><br/>
+                <strong>Revenue: </strong>{{revenue}}
+            </p>
+
+            <p style="line-height: 200%">
+                <strong>Keywords: </strong>
+                {{keywords}}
+            </p>
+
+        </td>
+    </tr>
+</table>
+{% include "display_sim.html" %}
+{% if session.username %}
+<table>
+    <tr>
+        <td>
+            <h4>Share New Review</h4>
+            <form action="{{ url_for('add_post') }}" method="post">
+                <dl>
+                    <dt>Title:</dt>
+                    <dd><input type="text" size="20" name="title"></dd>
+                    <dt>Tags (separated by: ,):</dt>
+                    <dd><input type="text" size="20" name="tags"></dd>
+                    <dt>Rating:</dt>
+                    <dd>
+                        <input type="radio" name="rating" value="1"> 1
+                        <input type="radio" name="rating" value="2"> 2
+                        <input type="radio" name="rating" value="3"> 3
+                        <input type="radio" name="rating" value="4"> 4
+                        <input type="radio" name="rating" value="5"> 5
+                    </dd>
+                    <dt>Text:</dt>
+                    <dd><textarea name="text" rows="7" cols="30"></textarea></dd>
+                    <input type="hidden" id="movieID" name="movieID" value={{id}}>
+                </dl>
+                <input type="submit" value="Share">
+            </form>
+
+        </td>
+        <td>
+            <h4>Recent Reviews</h4>
+            {% include "display_posts.html" %}
+        </td>
+    </tr>
+</table>
+{% else %}
+<table>
+    <tr>
+        <td>
+            <h4>Recent Reviews</h4>
+            {% include "display_posts.html" %}
+        </td>
+    </tr>
+</table>
+{% endif %}
+<!--#TODO: add films similar to this one -->
+
+
+<div id="myModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <div style="text-align: center;">
+        <iframe width="420" height="345" style="float:none" src={{ytlink}}>
+        </iframe>
+        </div>
+    </div>
+</div>
+<script>
+    // Get the modal
+    var modal = document.getElementById("myModal");
+    // Get the button that opens the modal
+    var btn = document.getElementById("myBtn");
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+    // When the user clicks the button, open the modal
+    btn.onclick = function() {modal.style.display = "block";}
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {modal.style.display = "none";}
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {if (event.target == modal) {modal.style.display = "none";}}
+</script>
+{% endblock %}>

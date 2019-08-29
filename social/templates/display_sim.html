@@ -1,0 +1,9 @@
+<div style="text-align: center;">
+    <h4>Similar Films: </h4>
+{% for row in simfilms %}
+        <a target="_top" href="{{ url_for('movie', movie_id=row.movieID) }}">
+            <img src={{row.poster}} alt={{row.title}} width="100" height="150">
+        </a>
+{% endfor %}
+</div>
+

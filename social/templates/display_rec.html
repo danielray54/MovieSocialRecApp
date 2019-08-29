@@ -1,0 +1,19 @@
+{% if not recs %}
+    <div style="text-align: center;">
+        <h4>Recommendations:</h4>
+        <p>In order to get better recommendations, please rate more films!</p>
+        {% for row in trending %}
+        <a target="_top" href="{{ url_for('movie', movie_id = row.movieID) }}">
+            <img src={{row.poster}} alt={{row.title}} width="100" height="150">
+        </a>
+        {% endfor %}
+    </div>
+{% else %}
+    <div style="text-align: center;">
+    <h4>Recommendations:</h4>
+    {% for row in recs %}
+    <a target="_top" href="{{ url_for('movie', movie_id = row.movieID) }}">
+        <img src={{row.poster}} alt={{row.title}} width="100" height="150">
+    </a>
+    {% endfor %}
+{% endif %}

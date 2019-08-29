@@ -1,0 +1,48 @@
+--------CONSTRAINTS ON DATA------------
+CREATE CONSTRAINT ON (n:User) ASSERT n.username IS UNIQUE
+CREATE CONSTRAINT ON (m:Movie) ASSERT m.movieID IS UNIQUE
+CREATE CONSTRAINT ON (g:Genre) ASSERT g.genreID IS UNIQUE
+CREATE CONSTRAINT ON (p:Post) ASSERT p.postid IS UNIQUE
+CREATE CONSTRAINT ON (t:Tag) ASSERT t.name IS UNIQUE
+-----------------------------------
+--------LOAD USER DATA------------
+LOAD CSV WITH HEADERS FROM 'file:///home/reddwarf/PycharmProjects/MovieSocialApp/Data/users.csv' AS csvLine
+CREATE (u:User {userid: toInteger(csvLine.userID), username: csvLine.username, password: csvLine.password})
+-----------------------------------
+--------LOAD MOVIE DATA------------
+LOAD CSV WITH HEADERS FROM 'file:///home/reddwarf/PycharmProjects/MovieSocialApp/Data/movieinfo.csv' AS csvLine
+CREATE (m:Movie {movieID: toInteger(csvLine.movieId), title: csvLine.title, overview: csvLine.overview, ytlink: csvLine.ytlink, poster: csvLine.poster, featcrew: toString(csvLine.featcrew), budget: csvLine.budget, revenue: csvLine.revenue, runtime: csvLine.runtime, lang: csvLine.lang, year: csvLine.year, avgrating: toFloat(csvLine.rating)})
+-----------------------------------
+--------LOAD GENRE DATA------------
+LOAD CSV WITH HEADERS FROM 'file:///home/reddwarf/PycharmProjects/MovieSocialApp/Data/genresinfo.csv' AS csvLine
+CREATE (g:Genre {genreId: toInteger(csvLine.GenreId), name: csvLine.Name})
+-----------------------------------
+--------LOAD GENRE REL DATA------------
+LOAD CSV WITH HEADERS FROM "file:///home/reddwarf/PycharmProjects/MovieSocialApp/Data/genres.csv" AS csvLine
+OPTIONAL MATCH (m:Movie {movieID: toInteger(csvLine.movieId)})
+OPTIONAL MATCH (g:Genre {genreId: toInteger(csvLine.code)})
+MERGE (m)-[:HAS_GENRE]->(g)
+-----------------------------------
+--------LOAD POST DATA------------
+LOAD CSV WITH HEADERS FROM 'file:///home/reddwarf/PycharmProjects/MovieSocialApp/Data/reviews.csv' AS csvLine
+OPTIONAL MATCH (m:Movie {movieID: toInteger(csvLine.movieId)})
+OPTIONAL MATCH (u:User {userid: toInteger(csvLine.userId)})
+CREATE (p:Post {postid: csvLine.id, title: toString(csvLine.title), rating: toInteger(csvLine.rating), text: toString(csvLine.text), movid: toInteger(csvLine.movieId), timestamp: toInteger(csvLine.timestamp), date: csvLine.date})
+MERGE (u)-[:PUBLISHED]->(p)
+MERGE (p)-[:REVIEWED]->(m)
+-----------------------------------
+--------LOAD TAG DATA------------
+LOAD CSV WITH HEADERS FROM 'file:///home/reddwarf/PycharmProjects/MovieSocialApp/Data/tags.csv' AS csvLine
+OPTIONAL MATCH (p:Post {postid: csvLine.id})
+MERGE (t:Tag {name: csvLine.tag})
+MERGE (t)-[:TAGGED]->(p)
+-----------------------------------
+LOAD CSV WITH HEADERS FROM 'file:///home/reddwarf/PycharmProjects/MovieSocialApp/Data/movie_keys.csv' AS csvLine
+OPTIONAL MATCH (m:Movie {movieID: toInteger(csvLine.movieId)})
+MERGE (t:Tag {name: toString(csvLine.keywords)})
+MERGE (t)-[:KEYWORD]->(m)
+
+LOAD CSV WITH HEADERS FROM 'file:///home/reddwarf/PycharmProjects/MovieSocialApp/Data/ratings.csv' AS csvLine
+OPTIONAL MATCH (m:Movie {movieID: toInteger(csvLine.movieId)})
+OPTIONAL MATCH (u:User {userid: toInteger(csvLine.userId)})
+MERGE (u)-[:RATED{ rating:toInteger(csvLine.rating) }]->(m)
