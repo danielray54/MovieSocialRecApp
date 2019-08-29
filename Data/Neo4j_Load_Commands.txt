@@ -46,3 +46,8 @@ LOAD CSV WITH HEADERS FROM 'file:///home/reddwarf/PycharmProjects/MovieSocialApp
 OPTIONAL MATCH (m:Movie {movieID: toInteger(csvLine.movieId)})
 OPTIONAL MATCH (u:User {userid: toInteger(csvLine.userId)})
 MERGE (u)-[:RATED{ rating:toInteger(csvLine.rating) }]->(m)
+
+LOAD CSV WITH HEADERS FROM 'file:///home/reddwarf/PycharmProjects/MovieSocialApp/Data/ratings.csv' AS csvLine
+OPTIONAL MATCH (m:Movie {movieID: toInteger(csvLine.movieId)})
+OPTIONAL MATCH (u:User {userid: toInteger(csvLine.userId)})
+MERGE (u)-[:RATED{ rating:toInteger(csvLine.rating) }]->(m)

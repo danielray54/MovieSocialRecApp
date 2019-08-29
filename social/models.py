@@ -267,32 +267,6 @@ class Movie:
             return graph.run(query, today=today)
 
     def recommend_films(user_id):
-        models = ["knnbl","slope","coclu","svd","svdpp","nmf"]
-        rec = []
-        try:
-            for x in models:
-                modelpath = './Models/dump_{}'.format(x)
-                predictions, algorithm = dump.load(modelpath)
-                df_rec = pd.DataFrame(predictions)
-                df_rec.drop("details", inplace=True, axis=1)
-                df_rec.columns = ['userid', 'movieID', 'actual', 'predictions']
-                rec_model = df_rec.pivot_table(index='userid', columns='movieID', values='predictions').fillna(0)
-                recommended_items = pd.DataFrame(rec_model.loc[user_id])
-                recommended_items.columns = ["predicted_rating"]
-                recommended_items = recommended_items.sort_values('predicted_rating', ascending=False)
-                recommended_items = recommended_items.head(10)
-                recommended_items = recommended_items.index.tolist()
-                rec.append(recommended_items)
-            flatten = [item for sublist in rec for item in sublist]
-            recs = dict((x,flatten.count(x)) for x in set(flatten))
-            listofrecs = list(dict(sorted(recs.items(), key=lambda x: x[1], reverse=True)[:10]).keys())
-            query = """
-                MATCH (movie:Movie)
-                WHERE movie.movieID IN {recommended_items}
-                RETURN movie.title as title, movie.movieID as movieID, movie.poster as poster
-                """
-            return graph.run(query, recommended_items= listofrecs).data()
-        except:
             return ''
 
     def get_similar_films(mov_id):
