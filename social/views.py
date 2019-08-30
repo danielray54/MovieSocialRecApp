@@ -126,6 +126,7 @@ def profile(username):
     userid = DataFrame(User.get_userid(str(username)))["userid"][0]
     trending = Movie.rated_films("trending")
     recs = Movie.recommend_films(int(userid))
+    recrecs = Movie.recommend_recent_films(int(userid))
     #store the username of the profile being viewed into variable
     user_being_viewed_username = username
     #store user node of of the profile being viewed into variable
@@ -149,7 +150,7 @@ def profile(username):
         username=username,
         posts=posts,
         similar=similar,
-        recs=recs, trending=trending
+        recs=recs, recrecs=recrecs, trending=trending
     )
 
 @app.route("/movie/<movie_id>")

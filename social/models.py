@@ -1,9 +1,8 @@
 # Import libraries
 from py2neo import Graph, Node, Relationship, NodeMatcher
 from passlib.hash import bcrypt
-from datetime import datetime
-from surprise import *
-import pandas as pd
+from datetime import date, datetime, timedelta
+import time
 import uuid
 
 
@@ -265,8 +264,34 @@ class Movie:
             return graph.run(query, today=today)
 
     def recommend_films(user_id):
+            query = """
+            MATCH (u1:User)-[:RATED]->(m3:Movie)
+            WHERE u1.userid = {user_id}
+            WITH [i in m3.movieID | i] as movies
+            MATCH (u1)-[r:RATED]->(m1:Movie)-[s:SIMILAR]->(mo:Movie)
+            WHERE u1.userid = {user_id} and r.rating > 3 and not mo.movieID in movies
+            RETURN mo.title as title, mo.movieID as movieID, mo.poster as poster
+            LIMIT 10
+            """
+            return graph.run(query, user_id= user_id).data()
 
-            return ''
+    def recommend_recent_films(user_id):
+        today = date.today()
+        first = today.replace(day=1)
+        lastMonth = first - timedelta(days=1)
+        s = lastMonth.replace(day=1).strftime('%d/%m/%Y')
+        timestamp = time.mktime(datetime.strptime(s, "%d/%m/%Y").timetuple())
+        query = """
+            MATCH (u1:User)-[:PUBLISHED]->(post:Post)-[:REVIEWED]->(m3:Movie) 
+            WHERE u1.userid = {user_id} and post.timestamp > {timestamp}
+            WITH [i in m3.movieID | i] as movies
+            MATCH (u1)-[r:RATED]->(m1:Movie)-[s:SIMILAR]->(mo:Movie)
+            WHERE u1.userid = {user_id} and  not mo.movieID in movies
+            RETURN mo.title as title, mo.movieID as movieID, mo.poster as poster
+            LIMIT 10
+            """
+        return graph.run(query, user_id= user_id, timestamp=timestamp ).data()
+
 
     def get_similar_films(mov_id):
         query = """
