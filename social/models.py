@@ -4,11 +4,10 @@ from passlib.hash import bcrypt
 from datetime import date, datetime, timedelta
 import time
 import uuid
-
-
-
+import os
+url = os.environ.get("GRAPHENEDB_URL", "http://localhost:7474")
 # init graph object
-graph = Graph()
+graph = Graph(url + "/db/data/")
 # init matcher object
 matcher = NodeMatcher(graph)
 
