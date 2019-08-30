@@ -4,10 +4,9 @@ from passlib.hash import bcrypt
 from datetime import date, datetime, timedelta
 import time
 import uuid
-import os
-url = os.environ.get("GRAPHENEDB_URL", "http://localhost:7474")
+
 # init graph object
-graph = Graph(url + "/db/data/")
+graph = Graph()
 # init matcher object
 matcher = NodeMatcher(graph)
 
@@ -285,7 +284,7 @@ class Movie:
             WHERE u1.userid = {user_id} and post.timestamp > {timestamp}
             WITH [i in m3.movieID | i] as movies
             MATCH (u1)-[r:RATED]->(m1:Movie)-[s:SIMILAR]->(mo:Movie)
-            WHERE u1.userid = {user_id} and  not mo.movieID in movies
+            WHERE u1.userid = {user_id} and not mo.movieID in movies
             RETURN mo.title as title, mo.movieID as movieID, mo.poster as poster
             LIMIT 10
             """
